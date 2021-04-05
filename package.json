@@ -3,7 +3,10 @@
   "version": "1.0.0",
   "description": "",
   "scripts": {
-    "dev": ""
+    "preinstall": "npx npm-force-resolutions",
+    "dev": "nodemon --exec babel-node server --delay 2",
+    "migrate": "npx prisma migrate dev",
+    "studio": "npx prisma studio"
   },
   "repository": {
     "type": "git",
@@ -15,5 +18,29 @@
   "bugs": {
     "url": "https://github.com/YeonSeok-Song/instaclone-backend/issues"
   },
-  "homepage": "https://github.com/YeonSeok-Song/instaclone-backend#readme"
+  "homepage": "https://github.com/YeonSeok-Song/instaclone-backend#readme",
+  "dependencies": {
+    "@prisma/client": "^2.19.0",
+    "apollo-server": "^2.21.2",
+    "apollo-server-express": "^2.22.2",
+    "bcrypt": "^5.0.1",
+    "dotenv": "^8.2.0",
+    "express": "^4.17.1",
+    "graphql": "^15.5.0",
+    "graphql-tools": "^7.0.4",
+    "jsonwebtoken": "^8.5.1",
+    "morgan": "^1.10.0"
+  },
+  "devDependencies": {
+    "@babel/core": "^7.13.14",
+    "@babel/node": "^7.13.13",
+    "@babel/preset-env": "^7.13.12",
+    "@babel/preset-react": "^7.12.13",
+    "nodemon": "^2.0.7",
+    "prisma": "^2.19.0"
+  },
+  "resolutions": {
+    "fs-capacitor": "^6.2.0",
+    "graphql-upload": "^11.0.0"
+  }
 }
