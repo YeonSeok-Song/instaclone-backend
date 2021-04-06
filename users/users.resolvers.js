@@ -46,5 +46,8 @@ export default {
                 },
             },
         }),
+        photos : ({id}) => client.user.findUnique({
+            where : {id}
+        }).photos(),
     },
 };
