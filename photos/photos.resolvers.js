@@ -23,11 +23,23 @@ export default {
                 photoId : id
             }
         }),
+        comments : ({id}) => client.comment.count({
+            where : {
+                photoId : id
+            }
+        }),
+        isMine : ({userId}, _, {loggedInUser}) => {
+            if(!loggedInUser) {
+                return false;
+            }
+            return userId === loggedInUser.id;
+        }
     },
     Hashtag: {
         photos : ({id}, {page}) => 
             client.hashtag.findUnique({
                 where : {id}
+                //페이지네이션 필요.
             }
         ).photos(),
         totalPhotos : ({id}) => client.photo.count({ 
