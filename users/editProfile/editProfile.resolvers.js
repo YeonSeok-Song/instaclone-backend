@@ -2,8 +2,11 @@ import client from '../../client';
 import fs from "fs";
 import bcrypt from 'bcrypt';
 import {protectResolver} from "../users.utils";
+import { uploadToS3 } from '../../shared/shared.utils';
+import { GraphQLUpload } from 'graphql-upload';
 
 export default {
+    Upload: GraphQLUpload,
     Mutation : {
         editProfile: protectResolver(
             async (_, {
@@ -17,12 +20,13 @@ export default {
             },{loggedInUser}) => {
                 let avatarUrl = null;
                 if(avatar){
-                    const {filename, createReadStream} = await avatar;
-                    const newFileName = `${loggedInUser.id}-${Date.now()}-${filename}`
-                    const readStream = createReadStream();
-                    const writeStream = fs.createWriteStream(process.cwd() + "\\upload\\" + newFileName);
-                    readStream.pipe(writeStream);
-                    avatarUrl = `http://localhost:4000/static/${newFileName}`;
+                    avatarUrl = await uploadToS3(avatar, loggedInUser.id, "avatar");
+                    // const {filename, createReadStream} = await avatar;
+                    // const newFileName = `${loggedInUser.id}-${Date.now()}-${filename}`
+                    // const readStream = createReadStream();
+                    // const writeStream = fs.createWriteStream(process.cwd() + "\\upload\\" + newFileName);
+                    // readStream.pipe(writeStream);
+                    // avatarUrl = `http://localhost:4000/static/${newFileName}`;
                 }
                 let uglyPassword = null;
                 if(newPassword){
