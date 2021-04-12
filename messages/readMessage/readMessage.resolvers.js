@@ -1,0 +1,46 @@
+import client from "../../client";
+import { protectResolver } from "../../users/users.utils";
+
+export default {
+    Mutation : {
+        readMessage : protectResolver(async(_, {id}, {loggedInUser}) => {
+            //find all message not mine using roomnumber(roomId) and take only id
+            const message = await client.message.findFirst({
+                where : {
+                    id,
+                    userId : {
+                        not : loggedInUser.id,
+                    },
+                    room : {
+                        users : {
+                            some : {
+                                id : loggedInUser.id
+                            }
+                        }
+                    }
+                },
+                select : {
+                    id : true,
+                }
+            })
+            if(!message) {
+                return {
+                    ok : false,
+                    error : "Message not found."
+                };
+            }
+            //when i seen message, change read property => true (default : false)
+            await client.message.update({
+                where : {
+                    id,
+                },
+                data : {
+                    read : true,
+                }
+            })
+            return {
+                ok : true
+            }
+        })
+    }
+}
