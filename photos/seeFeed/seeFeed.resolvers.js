@@ -1,28 +1,34 @@
 import client from "../../client";
 import { protectResolver } from "../../users/users.utils";
-//pagination 필요
+
 export default {
     Query: {
-        seeFeed: protectResolver((_, __, {loggedInUser}) => client.photo.findMany({
-            where: {
-                OR: [
-                    {
-                        user: {
-                            followers: {
-                                    some: {
-                                        id : loggedInUser.id,
+        seeFeed: protectResolver((_, {lastFd}, {loggedInUser}) => 
+            //cursor pagination
+            client.photo.findMany({
+                take : 3,
+                skip : lastFd ? 1 : 0,
+                ...(lastFd && {cursor : {id : lastFd}}),
+                where: {
+                    OR: [
+                        {
+                            user: {
+                                followers: {
+                                        some: {
+                                            id : loggedInUser.id,
+                                    },
                                 },
                             },
                         },
-                    },
-                    {
-                        userId: loggedInUser.id,
-                    }
-                ]
-            },
-            orderBy: {
-                createAt:"desc"
+                        {
+                            userId: loggedInUser.id,
+                        }
+                    ]
+                },
+                orderBy: {
+                    createAt:"desc"
+                }
             }
-        }))
+        ))
     }
 }
